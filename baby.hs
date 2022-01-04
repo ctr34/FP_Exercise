@@ -35,3 +35,5 @@ multiThree x y z = x*y*z
 
 applytwice :: (t -> t) -> t -> t
 applytwice f x = f (f x)
+
+--TODO: fold composition
