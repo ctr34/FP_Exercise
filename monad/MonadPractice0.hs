@@ -35,3 +35,27 @@ mInterp' (Div e1 e2) =
 
 e0 = Div (Con 2) (Con 0)            
 e1 = Div (Con 5) (Con 2)
+
+-- * Monadic interpreter with logging by custom Monad
+newtype L a = L (a , [[Char]])
+    deriving Show
+
+interp' :: Expr -> L Int
+interp' (Con i)     = L (i , ["Hit the constant " ++ show i ++ "\n"])
+interp' (Div e1 e2) = L (i1 `div` i2,
+                        "Hit the Div\n":
+                        "Left recurcive\n":
+                        msgL ++
+                        "Right recurcive\n":
+                        msgR
+                        )
+        where L (i1, msgL) = interp' e1
+              L (i2, msgR) = interp' e2
+            
+runL :: Expr -> IO ()
+runL e = do
+        print $ show i
+        putStrLn $ concat msgs
+    where L (i, msgs) = interp' e
+
+e2 = Div (Div (Con 5) (Con 2)) (Con 2)    
